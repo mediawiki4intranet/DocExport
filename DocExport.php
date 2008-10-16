@@ -158,7 +158,6 @@ class DocExport {
           global $wgMessageCache;
           if ( $this->messagesLoaded ) return true;
           $this->messagesLoaded = true;
-          $wgMessageCache->clear();
           require( dirname( __FILE__ ) . '/DocExport.i18n.php' );
           foreach ( $messages as $lang => $langMessages ) {
             $wgMessageCache->addMessages( $langMessages, $lang );
