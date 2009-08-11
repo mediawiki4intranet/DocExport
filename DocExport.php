@@ -118,9 +118,9 @@ class DocExport
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
             '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
-            '<style type="text/css"><!--' .
+            '<style type="text/css"><!--' . "\n" .
             @file_get_contents(dirname(__FILE__) . '/styles-word.css') .
-            '/*-->*/</style></head><body>' .
+            "\n" . '/*-->*/</style></head><body>' .
             $html .
             '</body></html>';
 
@@ -139,9 +139,9 @@ class DocExport
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
             '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
-            '<style type="text/css"><!--' .
+            '<style type="text/css"><!--' . "\n" .
             @file_get_contents(dirname(__FILE__) . '/styles-oo.css') .
-            '/*-->*/</style></head><body>' .
+            "\n" . '/*-->*/</style></head><body>' .
             $html .
             '</body></html>';
 
