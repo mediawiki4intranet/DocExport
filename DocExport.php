@@ -112,10 +112,18 @@ class DocExport
 
     function sendToWord($article)
     {
-        $html=$this->getPureHTML($article);
-        $title=$article->getTitle();
+        $html = $this->getPureHTML($article);
+        $title = $article->getTitle();
 
-        $html = '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>' . $html . "\n" . '</body></html>';
+        $html =
+            '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
+            '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
+            '<style type="text/css"><!--' .
+            @file_get_contents(dirname(__FILE__) . '/styles-word.css') .
+            '/*-->*/</style></head><body>' .
+            $html .
+            '</body></html>';
+
         header('Content-type: application/msword');
         header('Content-Length: '.strlen($html));
         $filename = $title.".doc";
@@ -128,7 +136,15 @@ class DocExport
         $html = $this->getPureHTML($article);
         $title = $article->getTitle();
 
-        $html='<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>' . $html . "\n" . '</body></html>';
+        $html =
+            '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
+            '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
+            '<style type="text/css"><!--' .
+            @file_get_contents(dirname(__FILE__) . '/styles-oo.css') .
+            '/*-->*/</style></head><body>' .
+            $html .
+            '</body></html>';
+
         header('Content-type: vnd.oasis.opendocument.text');
         header('Content-Length: '.strlen($html));
         $filename = $title.".odp";
