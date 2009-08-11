@@ -1,9 +1,9 @@
 <?php
+
 #coding: utf-8
 /** \file
 * \brief Internationalization file for the User Merge and Delete Extension.
 */
-
 
 $messages = array();
 
@@ -24,4 +24,3 @@ $messages['ru'] = array(
     'tooltip-ca-export2oo'                  => 'Экспорт в Open Office',
     'tooltip-ca-purge'                      => 'Обновить статью, сбросить кеш…',
 );
-
