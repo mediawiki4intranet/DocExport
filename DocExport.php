@@ -112,14 +112,19 @@ class DocExport
 
     function sendToWord($article)
     {
+        global $egDocExportWordStyles;
         $html = $this->getPureHTML($article);
         $title = $article->getTitle();
+
+        $st = $egDocExportWordStyles;
+        if (!$st)
+            $st = dirname(__FILE__) . '/styles-word.css';
 
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
             '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
             '<style type="text/css"><!--' . "\n" .
-            @file_get_contents(dirname(__FILE__) . '/styles-word.css') .
+            @file_get_contents($st) .
             "\n" . '/*-->*/</style></head><body>' .
             $html .
             '</body></html>';
@@ -133,14 +138,19 @@ class DocExport
 
     function sendToOO($article)
     {
+        global $egDocExportOOStyles;
         $html = $this->getPureHTML($article);
         $title = $article->getTitle();
+
+        $st = $egDocExportOOStyles;
+        if (!$st)
+            $st = dirname(__FILE__) . '/styles-oo.css';
 
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
             '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
             '<style type="text/css"><!--' . "\n" .
-            @file_get_contents(dirname(__FILE__) . '/styles-oo.css') .
+            @file_get_contents($st) .
             "\n" . '/*-->*/</style></head><body>' .
             $html .
             '</body></html>';
