@@ -162,7 +162,7 @@ class DocExport
         echo $html;
     }
 
-    public function onUnknownAction($action, &$article)
+    public function onUnknownAction($action, $article)
     {
         // Here comes all the stuff to show the form and parse it...
         global $wgTitle, $wgOut, $wgUser;
