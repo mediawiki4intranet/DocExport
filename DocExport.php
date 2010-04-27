@@ -23,11 +23,6 @@ class DocExport
     var $required_mw = '1.11';
     var $actions = array('export2word','export2oo');
 
-    function DocExport()
-    {
-        $this->__construct();
-    }
-
     function __construct()
     {
     }
@@ -97,6 +92,12 @@ class DocExport
         global $wgServer;
 
         $title = $article->getTitle();
+        if (method_exists($title, 'userCanReadEx') && !$title->userCanReadEx())
+        {
+            print '<html><body>DocExport: Permission Denied</body></html>';
+            exit;
+        }
+
         $wgOut->setPrintable();
         $wgOut->disable();
         $parserOptions = ParserOptions::newFromUser($wgUser);
@@ -110,15 +111,15 @@ class DocExport
         return $html;
     }
 
-    function sendToWord($article)
+    function sendTo($article, $to)
     {
-        global $egDocExportWordStyles;
+        global $egDocExportStyles;
         $html = $this->getPureHTML($article);
         $title = $article->getTitle();
 
-        $st = $egDocExportWordStyles;
+        $st = $egDocExportStyles[$to];
         if (!$st)
-            $st = dirname(__FILE__) . '/styles-word.css';
+            $st = dirname(__FILE__) . "/styles-$to.css";
 
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
@@ -129,35 +130,9 @@ class DocExport
             $html .
             '</body></html>';
 
-        header('Content-type: application/msword');
+        header('Content-type: '.($to == 'word' ? 'application/msword' : 'vnd.oasis.opendocument.text'));
         header('Content-Length: '.strlen($html));
-        $filename = $title.".doc";
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-        echo $html;
-    }
-
-    function sendToOO($article)
-    {
-        global $egDocExportOOStyles;
-        $html = $this->getPureHTML($article);
-        $title = $article->getTitle();
-
-        $st = $egDocExportOOStyles;
-        if (!$st)
-            $st = dirname(__FILE__) . '/styles-oo.css';
-
-        $html =
-            '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
-            '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
-            '<style type="text/css"><!--' . "\n" .
-            @file_get_contents($st) .
-            "\n" . '/*-->*/</style></head><body>' .
-            $html .
-            '</body></html>';
-
-        header('Content-type: vnd.oasis.opendocument.text');
-        header('Content-Length: '.strlen($html));
-        $filename = $title.".odp";
+        $filename = $title.($to == 'word' ? '.doc' : '.odp');
         header('Content-Disposition: attachment; filename="'.$filename.'"');
         echo $html;
     }
@@ -172,14 +147,12 @@ class DocExport
         $action = strtolower($action);
         if (!in_array($action, $this->actions))
         {
-          // Not our action, so return!
-          return true;
+            // Not our action, so return!
+            return true;
         }
 
-        if ($action == 'export2word')
-          $this->sendToWord($article);
-        if ($action == 'export2oo')
-          $this->sendToOO($article);
+        if ($action == 'export2word' || $action == 'export2oo')
+            $this->sendTo($article, substr($action, 7));
         return false;
     }
 
