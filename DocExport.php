@@ -74,6 +74,8 @@ class DocExport
     {
         self::fillActions();
         $links['actions'] = array_merge($links['actions'], self::$actions);
+        $links['views'][] = $links['actions']['purge'];
+        unset($links['actions']['purge']);
         return true;
     }
 
