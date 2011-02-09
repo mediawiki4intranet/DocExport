@@ -1,9 +1,5 @@
 <?php
-
-#coding: utf-8
-/** \file
-* \brief Internationalization file for the User Merge and Delete Extension.
-*/
+/* Internationalization file for the DocExport Extension */
 
 $messages = array();
 

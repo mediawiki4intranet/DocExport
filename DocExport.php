@@ -1,5 +1,29 @@
 <?php
 
+/**
+ * MediaWiki DocExport extension
+ * Adds 3 new actions ->m$word, ->openoffice, purge to all Wiki pages
+ * Version 1.3 compatible with MediaWiki 1.16 and Vector skin
+ *
+ * Copyright © 2008-2011 Stas Fomin, Vitaliy Filippov
+ * http://wiki.4intra.net/DocExport
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
 if (!defined('MEDIAWIKI'))
 {
     ?>
@@ -10,111 +34,109 @@ if (!defined('MEDIAWIKI'))
     exit(1);
 }
 
+$wgHooks['SkinTemplateContentActions'][] = 'DocExport::onSkinTemplateContentActions';
+$wgHooks['UnknownAction'][]              = 'DocExport::onUnknownAction';
+$wgHooks['SkinTemplateNavigation'][]     = 'DocExport::onSkinTemplateNavigation';
+$wgExtensionMessagesFiles['DocExport'] = dirname(__FILE__).'/DocExport.i18n.php';
+$wgExtensionFunctions[] = 'DocExport::Setup';
+$wgExtensionCredits['other'][] = array(
+    'name'        => 'DocExport',
+    'author'      => 'Stas Fomin',
+    'version'     => DocExport::$version,
+    'description' => 'Adds 3 new actions for pages: render as HTML for M$WORD / OpenOffice, purge article',
+    'url'         => 'http://wiki.4intra.net/DocExport',
+);
+
 class DocExport
 {
-    var $title;
-    var $article;
-    var $html;
-    var $parserOptions;
-    var $bhtml;
+    static $version     = '1.3 (2011-02-09)';
+    static $required_mw = '1.11';
+    static $actions     = NULL;
 
-    var $messagesLoaded = false;
-    var $version     = '1.2 (2008-04-01)';
-    var $required_mw = '1.11';
-    var $actions = array('export2word','export2oo');
-
-    function __construct()
+    static function Setup()
     {
-    }
-
-    public function Setup()
-    {
-        global $wgExtensionCredits;
-
         // A current MW-Version is required so check for it...
-        wfUseMW($this->required_mw);
-
-        if ($this->messagesLoaded == false)
-            $this->onLoadAllMessages();
-
-        $wgExtensionCredits['other'][] = array(
-            'name'        => 'DocExport',
-            'author'      => 'Stas Fomin',
-            'version'     => $this->version,
-            'description' => 'Renders an article/page as HTML for M$WORD',
-            'url'         => '',
-        );
-
-        if ($this->config['debug'] == true)
-            error_reporting(E_ALL);
+        wfUseMW(self::$required_mw);
     }
 
-    public function onSkinTemplateContentActions(&$content_actions)
+    //// hooks ////
+
+    // Hook for standard skins
+    static function onSkinTemplateContentActions(&$content_actions)
     {
-        global $wgTitle,$wgRequest;
+        self::fillActions();
+        $content_actions = array_merge($content_actions, self::$actions);
+        return true;
+    }
+
+    // Hook for Vector (MediaWiki 1.16+) skin
+    static function onSkinTemplateNavigation(&$skin, &$links)
+    {
+        self::fillActions();
+        $links['actions'] = array_merge($links['actions'], self::$actions);
+        return true;
+    }
+
+    // Hook for handling DocExport actions
+    static function onUnknownAction($action, $article)
+    {
+        $action = strtolower($action);
+        if ($action == 'export2word' || $action == 'export2oo')
+        {
+            self::sendTo($article, substr($action, 7));
+            return false;
+        }
+        return true;
+    }
+
+    //// non-hooks ////
+
+    // fills self::$actions for current title
+    static function fillActions()
+    {
+        // Actions already filled?
+        if (self::$actions !== NULL)
+            return true;
+        self::$actions = array();
+
+        global $wgTitle, $wgRequest;
 
         $disallow_actions = array('edit', 'submit'); // disallowed actions
-        $values = new webRequest();
-        $action = $values->getVal('action');
+        $action = $wgRequest->getVal('action');
         $current_ns = $wgTitle->getNamespace();
 
+        // Disable for special pages
         if ($current_ns < 0)
-            return true;
-        if (in_array($action, $disallow_actions))
-            return true;
+            return false;
 
-        $docexport_action['export2word'] = array(
+        // Disable for edit/preview
+        if (in_array($action, $disallow_actions))
+            return false;
+
+        self::$actions['export2word'] = array(
             'class' => false,
             'text'  => wfMsg('docexport-msword-export-link'),
             'href'  => $wgRequest->appendQuery('action=export2word')
         );
-        $docexport_action['export2oo'] = array(
+        self::$actions['export2oo'] = array(
             'class' => false,
             'text'  => wfMsg('docexport-oo-export-link'),
             'href'  => $wgTitle->getFullURL('action=export2oo')
         );
-        $docexport_action['purge'] = array(
+        self::$actions['purge'] = array(
             'class' => false,
             'text'  => wfMsg('docexport-purge-tab'),
             'href'  => $wgTitle->getFullURL('action=purge')
         );
-        $content_actions = array_merge($content_actions, $docexport_action);
+
         return true;
     }
 
-    function getPureHTML($article)
-    {
-        global $wgRequest;
-        global $wgOut;
-        global $wgUser;
-        global $wgParser;
-        global $wgScriptPath;
-        global $wgServer;
-
-        $title = $article->getTitle();
-        if (method_exists($title, 'userCanReadEx') && !$title->userCanReadEx())
-        {
-            print '<html><body>DocExport: Permission Denied</body></html>';
-            exit;
-        }
-
-        $wgOut->setPrintable();
-        $wgOut->disable();
-        $parserOptions = ParserOptions::newFromUser($wgUser);
-        $parserOptions->setEditSection(false);
-        $parserOptions->setTidy(true);
-        $wgParser->mShowToc = false;
-        $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent()) ."\n\n", $title, $parserOptions);
-
-        $bhtml = $parserOutput->getText();
-        $html = $this->html2print($bhtml);
-        return $html;
-    }
-
-    function sendTo($article, $to)
+    // Output HTML code with correct content-type for M$WORD / OO
+    static function sendTo($article, $to)
     {
         global $egDocExportStyles;
-        $html = $this->getPureHTML($article);
+        $html = self::getPureHTML($article);
         $title = $article->getTitle();
 
         $st = $egDocExportStyles[$to];
@@ -137,61 +159,54 @@ class DocExport
         echo $html;
     }
 
-    public function onUnknownAction($action, $article)
+    static function getPureHTML($article)
     {
-        // Here comes all the stuff to show the form and parse it...
-        global $wgTitle, $wgOut, $wgUser;
+        global $wgOut, $wgUser, $wgParser;
 
-        // Check the requested action
-        // return if not for w2l
-        $action = strtolower($action);
-        if (!in_array($action, $this->actions))
+        $title = $article->getTitle();
+        if (method_exists($title, 'userCanReadEx') && !$title->userCanReadEx())
         {
-            // Not our action, so return!
-            return true;
+            // Support HaloACL rights
+            print '<html><body>DocExport: Permission Denied</body></html>';
+            exit;
         }
 
-        if ($action == 'export2word' || $action == 'export2oo')
-            $this->sendTo($article, substr($action, 7));
-        return false;
-    }
+        $wgOut->setPrintable();
+        $wgOut->disable();
+        $parserOptions = ParserOptions::newFromUser($wgUser);
+        $parserOptions->setEditSection(false);
+        $parserOptions->setTidy(true);
+        $wgParser->mShowToc = false;
+        $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent()) ."\n\n", $title, $parserOptions);
 
-    public function onLoadAllMessages()
-    {
-        global $wgMessageCache;
-        if ($this->messagesLoaded)
-            return true;
-        $this->messagesLoaded = true;
-        require(dirname(__FILE__) . '/DocExport.i18n.php');
-        foreach ($messages as $lang => $langMessages)
-            $wgMessageCache->addMessages($langMessages, $lang);
-        return true;
-    }
-
-    private function html2print($html)
-    {
-        global $wgScriptPath, $wgServer, $wgScript;
-
-        $html = $this->clearScreenOnly($html);
-        $html = str_replace('[svg]</a>','</a>',$html);
-        $html = $this->clearHrefs($html);
-        $html = str_replace('src="'.$wgScriptPath,'src="'.$wgServer.$wgScriptPath,$html);
+        $bhtml = $parserOutput->getText();
+        $html = self::html2print($bhtml);
         return $html;
     }
 
-    private function clearScreenOnly($text)
+    static function html2print($html)
     {
-        return $this->cutBlock($text,"/<\\s*div\\s*class=\"(screenonly|printfooter)\"/i","/<\\/\\s*div\\s*>/i");
+        global $wgScriptPath, $wgServer;
+        $html = self::clearScreenOnly($html);
+        $html = str_replace('[svg]</a>', '</a>', $html);
+        $html = self::clearHrefs($html);
+        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer.$wgScriptPath, $html);
+        return $html;
     }
 
-    private function clearHrefs($text)
+    static function clearScreenOnly($text)
+    {
+        return self::cutBlock($text, "/<\\s*div\\s*class=\"(screenonly|printfooter)\"/i","/<\\/\\s*div\\s*>/i");
+    }
+
+    static function clearHrefs($text)
     {
         global $wgScriptPath;
         $regexp = "/<a href=\"". str_replace("/","\/",$wgScriptPath) . "\/images[^\"]+\">/i";
-        return $this->stripTags($text,$regexp,"/<\\/\\s*a\\s*>/i");
+        return self::stripTags($text, $regexp, "/<\\/\\s*a\\s*>/i");
     }
 
-    private function stripTags($text, $startRegexp, $endRegexp)
+    static function stripTags($text, $startRegexp, $endRegexp)
     {
         $stripped = '';
 
@@ -210,7 +225,7 @@ class DocExport
         return $stripped;
     }
 
-    private function cutBlock($text, $startRegexp, $endRegexp)
+    static function cutBlock($text, $startRegexp, $endRegexp)
     {
         $stripped = '';
         while ('' != $text)
@@ -228,23 +243,3 @@ class DocExport
         return $stripped;
     }
 }
-
-function wfSpecialDocExport()
-{
-    global $IP, $wgMessageCache;
-    wfLoadExtensionMessages('DocExport');
-    $wgMessageCache->addMessages(
-        array(
-            'specialpagename' => 'DocExport',
-            'docexport'       => 'DocExport',
-        )
-    );
-}
-
-$DocExport = new DocExport();
-
-$wgHooks['LoadAllMessages'][]            = &$DocExport;
-$wgHooks['SkinTemplateContentActions'][] = &$DocExport;
-$wgHooks['UnknownAction'][]              = &$DocExport;
-
-$wgExtensionFunctions[] = array(&$DocExport, 'Setup');
