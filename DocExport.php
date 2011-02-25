@@ -115,6 +115,8 @@ class DocExport
         if (in_array($action, $disallow_actions))
             return false;
 
+        wfLoadExtensionMessages('DocExport');
+
         self::$actions['export2word'] = array(
             'class' => false,
             'text'  => wfMsg('docexport-msword-export-link'),
