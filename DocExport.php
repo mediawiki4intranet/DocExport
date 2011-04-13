@@ -2,8 +2,8 @@
 
 /**
  * MediaWiki DocExport extension
- * Adds 3 new actions ->m$word, ->openoffice, purge to all Wiki pages
- * Version 1.3 compatible with MediaWiki 1.16 and Vector skin
+ * Adds 3 new actions "->m$word", "->openoffice", "purge" to all Wiki pages
+ * Version 1.32 compatible with MediaWiki 1.16 and Vector skin
  *
  * Copyright © 2008-2011 Stas Fomin, Vitaliy Filippov
  * http://wiki.4intra.net/DocExport
@@ -49,7 +49,7 @@ $wgExtensionCredits['other'][] = array(
 
 class DocExport
 {
-    static $version     = '1.3 (2011-02-09)';
+    static $version     = '1.32 (2011-04-12)';
     static $required_mw = '1.11';
     static $actions     = NULL;
 
@@ -146,13 +146,19 @@ class DocExport
         $st = $egDocExportStyles[$to];
         if (!$st)
             $st = dirname(__FILE__) . "/styles-$to.css";
+        $st = @file_get_contents($st);
+        if ($to == 'word')
+        {
+            // Add styles for HTML list numbering
+            $html = self::multinumLists($html, $st);
+        }
 
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
             '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
             '<style type="text/css"><!--' . "\n" .
-            @file_get_contents($st) .
-            "\n" . '/*-->*/</style></head><body>' .
+            $st .
+            '/*-->*/</style></head><body>' .
             $html .
             '</body></html>';
 
@@ -161,6 +167,87 @@ class DocExport
         $filename = $title.($to == 'word' ? '.doc' : '.odp');
         header('Content-Disposition: attachment; filename="'.$filename.'"');
         echo $html;
+    }
+
+    /* Load HTML content into a DOMDocument */
+    static function loadDOM($html)
+    {
+        $dom = new DOMDocument();
+        $oe = error_reporting();
+        error_reporting($oe & ~E_WARNING);
+        $dom->loadHTML("<?xml version='1.0' encoding='UTF-8'?>".mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+        error_reporting($oe);
+        return $dom;
+    }
+
+    /* Export children of $element to an HTML string */
+    static function saveChildren($element, $trim = false)
+    {
+        $xml = $element->ownerDocument->saveXML($element, LIBXML_NOEMPTYTAG);
+        $xml = preg_replace('/^\s*<[^>]*>(.*?)<\/[^\>]*>\s*$/uis', '\1', $xml);
+        $xml = preg_replace('#(<(br|input)(\s+[^<>]*[^/])?)></\2>#', '\1 />', $xml);
+        return $xml;
+    }
+
+    /* Make HTML ordered lists with class=multinum or inside an element with class=multinum
+       numbered hierarchically */
+    static function multinumLists($html, &$css)
+    {
+        if (!preg_match('/<([a-z0-9-:]+)[^<>]*class="[^<>\"\'\s]*multinum[^<>]*>/is', $html))
+            return $html;
+        $maxlevel = array();
+        $dom = self::loadDOM($html);
+        $stack = array(array($dom->documentElement, 0, false, 0));
+        $maxlist = 0;
+        while ($stack)
+        {
+            list($p, $i, $multi, $listindex) = $stack[0];
+            if ($i >= $p->childNodes->length)
+            {
+                array_shift($stack);
+                continue;
+            }
+            $stack[0][1]++;
+            $e = $p->childNodes->item($i);
+            if ($e->nodeType == XML_ELEMENT_NODE)
+            {
+                if (!$multi && preg_match('/\bmultinum\b/s', $e->getAttribute('class')))
+                {
+                    // Begin multinumbered list
+                    $stack[0][2] = $multi = 1;
+                }
+                if ($multi && $e->nodeName == 'li')
+                {
+                    // Add M$Word pseudo-style
+                    $level = $multi-1;
+                    $style = "mso-list: l$listindex level$level lfo$level";
+                    if (!($a = $e->getAttribute('style')))
+                        $e->setAttribute('style', $style);
+                    else
+                        $a->value = rtrim($a->value, "; \t\r\n") . '; ' . $style;
+                }
+                elseif ($multi && $e->nodeName == 'ol')
+                {
+                    if ($multi < 2)
+                        $listindex = ++$maxlist;
+                    $maxlevel[$multi][$listindex] = true;
+                    $multi++;
+                }
+                if ($e->childNodes->length)
+                    array_unshift($stack, array($e, 0, $multi, $listindex));
+            }
+        }
+        // Append CSS classes to $st
+        $st = '';
+        for ($i = 1; $maxlevel[$i]; $i++)
+        {
+            $st .= '%'.$i.'\.';
+            $k = array_keys($maxlevel[$i]);
+            foreach ($k as &$list)
+                $list = "@list l$list:level$i";
+            $css .= implode(", ", $k) . " { mso-level-text:\"$st\"; }\n";
+        }
+        return self::saveChildren($dom->documentElement->childNodes->item(0));
     }
 
     static function getPureHTML($article)
