@@ -281,7 +281,9 @@ class DocExport
         $html = self::clearScreenOnly($html);
         $html = str_replace('[svg]</a>', '</a>', $html);
         $html = self::clearHrefs($html);
-        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer.$wgScriptPath, $html);
+        // Make image urls absolute
+        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer.$wgUploadPath, $html);
+        $html = preg_replace('#(<object[^<>]*data=")'.preg_quote($wgUploadPath).'#', '\1'.$wgServer.$wgUploadPath, $html);
         return $html;
     }
 
