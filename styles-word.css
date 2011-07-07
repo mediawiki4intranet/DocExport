@@ -6,3 +6,4 @@ ul li { list-style-type: square; }
 .maximg img { width: 17cm; height: auto !important; }
 @page SectionLandscape { mso-page-orientation: landscape; size: 297mm 210mm; }
 div.SectionLandscape { page: SectionLandscape; }
+div.SectionLandscape .maximg img { width: 25cm; }
