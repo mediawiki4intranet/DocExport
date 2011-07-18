@@ -37,6 +37,9 @@ if (!defined('MEDIAWIKI'))
 $wgHooks['SkinTemplateContentActions'][] = 'DocExport::onSkinTemplateContentActions';
 $wgHooks['UnknownAction'][]              = 'DocExport::onUnknownAction';
 $wgHooks['SkinTemplateNavigation'][]     = 'DocExport::onSkinTemplateNavigation';
+$wgHooks['MagicWordwgVariableIDs'][]     = 'DocExport::MagicWordwgVariableIDs';
+$wgHooks['ParserGetVariableValueSwitch'][] = 'DocExport::ParserGetVariableValueSwitch';
+
 $wgExtensionMessagesFiles['DocExport'] = dirname(__FILE__).'/DocExport.i18n.php';
 $wgExtensionFunctions[] = 'DocExport::Setup';
 $wgExtensionCredits['other'][] = array(
@@ -61,7 +64,23 @@ class DocExport
 
     //// hooks ////
 
-    // Hook for standard skins
+    // Hook that creates {{DOCEXPORT}} magic word
+    static function MagicWordwgVariableIDs(&$mVariablesIDs)
+    {
+        wfLoadExtensionMessages('UserMagic');
+        $mVariablesIDs[] = 'docexport';
+        return true;
+    }
+
+    // Hook that evaluates {{DOCEXPORT}} magic word
+    static function ParserGetVariableValueSwitch(&$parser, &$varCache, &$index, &$ret)
+    {
+        if ($index == 'docexport')
+            $ret = $parser->extIsDocExport ? '1' : '';
+        return true;
+    }
+
+    // Hook used to display a tab in standard skins
     static function onSkinTemplateContentActions(&$content_actions)
     {
         self::fillActions();
@@ -69,7 +88,7 @@ class DocExport
         return true;
     }
 
-    // Hook for Vector (MediaWiki 1.16+) skin
+    // Hook used to display a tab in Vector (MediaWiki 1.16+) skin
     static function onSkinTemplateNavigation(&$skin, &$links)
     {
         self::fillActions();
@@ -268,7 +287,9 @@ class DocExport
         $parserOptions->setEditSection(false);
         $parserOptions->setTidy(true);
         $wgParser->mShowToc = false;
+        $wgParser->extIsDocExport = true;
         $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent()) ."\n\n", $title, $parserOptions);
+        $wgParser->extIsDocExport = false;
 
         $bhtml = $parserOutput->getText();
         $html = self::html2print($bhtml);

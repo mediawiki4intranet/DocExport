@@ -20,3 +20,9 @@ $messages['ru'] = array(
     'tooltip-ca-export2oo'                  => 'Экспорт в Open Office',
     'tooltip-ca-purge'                      => 'Обновить статью, сбросить кеш…',
 );
+
+$magicWords = array();
+
+$magicWords['en'] = array(
+    'docexport' => array('1', 'DOCEXPORT'),
+);
