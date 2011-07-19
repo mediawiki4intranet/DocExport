@@ -300,11 +300,14 @@ class DocExport
     {
         global $wgScriptPath, $wgServer;
         $html = self::clearScreenOnly($html);
+        // Remove [svg] graphviz links
         $html = str_replace('[svg]</a>', '</a>', $html);
+        // Remove hyperlinks to images on the server
         $html = self::clearHrefs($html);
+        // Remove enclosing <object type="image/svg+xml"> for SVG+PNG images
+        $html = preg_replace('#<object[^<>]*type=[\"\']?image/svg\+xml[^<>]*>(.*?)</object\s*>#is', '\1', $html);
         // Make image urls absolute
-        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer.$wgUploadPath, $html);
-        $html = preg_replace('#(<object[^<>]*data=")'.preg_quote($wgUploadPath).'#', '\1'.$wgServer.$wgUploadPath, $html);
+        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer, $html);
         return $html;
     }
 
@@ -316,21 +319,21 @@ class DocExport
     static function clearHrefs($text)
     {
         global $wgScriptPath;
-        $regexp = "/<a href=\"". str_replace("/","\/",$wgScriptPath) . "\/images[^\"]+\">/i";
-        return self::stripTags($text, $regexp, "/<\\/\\s*a\\s*>/i");
+        $regexp = "/<a[^<>]*href=[\"\']?" . str_replace("/", "\/", $wgScriptPath) . "\/images[^<>]*>/i";
+        return self::stripTags($text, $regexp, '#</\s*a\s*>#i');
     }
 
     static function stripTags($text, $startRegexp, $endRegexp)
     {
         $stripped = '';
-
         while ('' != $text)
         {
             $p = preg_split($startRegexp, $text, 2);
             $stripped .= $p[0];
-            if ((count($p) < 2) || ('' == $p[1])) {
+            if ((count($p) < 2) || ('' == $p[1]))
                 $text = '';
-            } else {
+            else
+            {
                 $q = preg_split($endRegexp, $p[1], 2);
                 $stripped .= $q[0];
                 $text = $q[1];
