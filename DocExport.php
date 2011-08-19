@@ -171,6 +171,8 @@ class DocExport
         {
             // Add styles for HTML list numbering
             $html = self::multinumLists($html, $st);
+            // Enable page numbering
+            $html = "<div class=\"SectionNumbered\">$html</div>";
         }
 
         $html =
