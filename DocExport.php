@@ -293,12 +293,11 @@ class DocExport
         $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent()) ."\n\n", $title, $parserOptions);
         $wgParser->extIsDocExport = false;
 
-        $bhtml = $parserOutput->getText();
-        $html = self::html2print($bhtml);
+        $html = self::html2print($parserOutput->getText(), $title);
         return $html;
     }
 
-    static function html2print($html)
+    static function html2print($html, $title = NULL)
     {
         global $wgScriptPath, $wgServer;
         $html = self::clearScreenOnly($html);
@@ -310,6 +309,9 @@ class DocExport
         $html = preg_replace('#<object[^<>]*type=[\"\']?image/svg\+xml[^<>]*>(.*?)</object\s*>#is', '\1', $html);
         // Make image urls absolute
         $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer, $html);
+        // Replace links to anchors within self to just anchors
+        if ($title)
+            $html = str_replace('href="'.$title->getLocalUrl().'#', 'href="#', $html);
         return $html;
     }
 
