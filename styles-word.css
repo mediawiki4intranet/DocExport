@@ -4,6 +4,24 @@ body { font-size: 12pt; }
 h1 { text-transform: uppercase; }
 ul li { list-style-type: square; }
 .maximg img { width: 17cm; height: auto !important; }
-@page SectionLandscape { mso-page-orientation: landscape; size: 297mm 210mm; }
+@page SectionNumbered {
+	mso-even-header:url("{{SERVER}}/extensions/DocExport/header.htm") eh1;
+	mso-header:url("{{SERVER}}/extensions/DocExport/header.htm") h1;
+	mso-even-footer:url("{{SERVER}}/extensions/DocExport/header.htm") ef1;
+	mso-footer:url("{{SERVER}}/extensions/DocExport/header.htm") f1;
+	mso-first-header:url("{{SERVER}}/extensions/DocExport/header.htm") fh1;
+	mso-first-footer:url("{{SERVER}}/extensions/DocExport/header.htm") ff1;
+}
+div.SectionNumbered { page: SectionNumbered; }
+@page SectionLandscape {
+	mso-page-orientation: landscape;
+	size: 297mm 210mm;
+	mso-even-header:url("{{SERVER}}/extensions/DocExport/header.htm") eh1;
+	mso-header:url("{{SERVER}}/extensions/DocExport/header.htm") h1;
+	mso-even-footer:url("{{SERVER}}/extensions/DocExport/header.htm") ef1;
+	mso-footer:url("{{SERVER}}/extensions/DocExport/header.htm") f1;
+	mso-first-header:url("{{SERVER}}/extensions/DocExport/header.htm") fh1;
+	mso-first-footer:url("{{SERVER}}/extensions/DocExport/header.htm") ff1;
+}
 div.SectionLandscape { page: SectionLandscape; }
 div.SectionLandscape .maximg img { width: 25cm; }

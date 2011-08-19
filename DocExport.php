@@ -158,7 +158,7 @@ class DocExport
     // Output HTML code with correct content-type for M$WORD / OO
     static function sendTo($article, $to)
     {
-        global $egDocExportStyles;
+        global $egDocExportStyles, $wgServer;
         $html = self::getPureHTML($article);
         $title = $article->getTitle();
 
@@ -166,6 +166,7 @@ class DocExport
         if (!$st)
             $st = dirname(__FILE__) . "/styles-$to.css";
         $st = @file_get_contents($st);
+        $st = str_replace('{{SERVER}}', $wgServer, $st);
         if ($to == 'word')
         {
             // Add styles for HTML list numbering
@@ -175,6 +176,7 @@ class DocExport
         $html =
             '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>' .
             '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' .
+            ($to == 'word' ? '<meta name=ProgId content=Word.Document>' : '') .
             '<style type="text/css"><!--' . "\n" .
             $st .
             '/*-->*/</style></head><body>' .
