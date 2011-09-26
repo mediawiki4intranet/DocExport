@@ -166,7 +166,7 @@ class DocExport
         if (!$st)
             $st = dirname(__FILE__) . "/styles-$to.css";
         $st = @file_get_contents($st);
-        $st = str_replace('{{SERVER}}', $wgServer, $st);
+        $st = str_replace('{{SERVER}}', $wgServer.$wgScriptPath, $st);
         if ($to == 'word')
         {
             // Add styles for HTML list numbering
