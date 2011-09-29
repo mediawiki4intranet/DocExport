@@ -2,11 +2,15 @@
 
 /**
  * MediaWiki DocExport extension
- * Adds 3 new actions "->m$word", "->openoffice", "purge" to all Wiki pages
- * Version 1.32 compatible with MediaWiki 1.16 and Vector skin
+ * Version 1.4 compatible with MediaWiki 1.16 and Vector skin
  *
  * Copyright © 2008-2011 Stas Fomin, Vitaliy Filippov
  * http://wiki.4intra.net/DocExport
+ *
+ * 1) Adds a content-action tab "purge"
+ * 2) Adds "clean HTML", "->m$word", "->openoffice" links to toolbox (in the left left)
+ *    "clean HTML" leads to &useskin=cleanmonobook by default,
+ *    you can change it with $egDocexportCleanHtmlParams
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +41,7 @@ if (!defined('MEDIAWIKI'))
 $wgHooks['SkinTemplateContentActions'][] = 'DocExport::onSkinTemplateContentActions';
 $wgHooks['UnknownAction'][]              = 'DocExport::onUnknownAction';
 $wgHooks['SkinTemplateNavigation'][]     = 'DocExport::onSkinTemplateNavigation';
+$wgHooks['SkinTemplateToolboxEnd'][]     = 'DocExport::SkinTemplateToolboxEnd';
 $wgHooks['MagicWordwgVariableIDs'][]     = 'DocExport::MagicWordwgVariableIDs';
 $wgHooks['ParserGetVariableValueSwitch'][] = 'DocExport::ParserGetVariableValueSwitch';
 
@@ -50,9 +55,12 @@ $wgExtensionCredits['other'][] = array(
     'url'         => 'http://wiki.4intra.net/DocExport',
 );
 
+if (!isset($egDocexportCleanHtmlParams))
+    $egDocexportCleanHtmlParams = "useskin=cleanmonobook";
+
 class DocExport
 {
-    static $version     = '1.32 (2011-04-12)';
+    static $version     = '1.4 (2011-09-29)';
     static $required_mw = '1.11';
     static $actions     = NULL;
 
@@ -67,7 +75,7 @@ class DocExport
     // Hook that creates {{DOCEXPORT}} magic word
     static function MagicWordwgVariableIDs(&$mVariablesIDs)
     {
-        wfLoadExtensionMessages('UserMagic');
+        wfLoadExtensionMessages('DocExport');
         $mVariablesIDs[] = 'docexport';
         return true;
     }
@@ -84,7 +92,7 @@ class DocExport
     static function onSkinTemplateContentActions(&$content_actions)
     {
         self::fillActions();
-        $content_actions = array_merge($content_actions, self::$actions);
+        $content_actions['purge'] = self::$actions['purge'];
         return true;
     }
 
@@ -92,9 +100,7 @@ class DocExport
     static function onSkinTemplateNavigation(&$skin, &$links)
     {
         self::fillActions();
-        $links['actions'] = array_merge($links['actions'], self::$actions);
-        $links['views'][] = $links['actions']['purge'];
-        unset($links['actions']['purge']);
+        $links['views'][] = self::$actions['purge'];
         return true;
     }
 
@@ -110,6 +116,20 @@ class DocExport
         return true;
     }
 
+    // Output our TOOLBOX links
+    function SkinTemplateToolboxEnd($tpl)
+    {
+        self::fillActions();
+        foreach (array('cleanmonobook', 'export2word', 'export2oo') as $link)
+            if (!empty(self::$actions[$link]))
+                print '<li id="t-'.$link.'" title="'.
+                    htmlspecialchars(self::$actions[$link]['tooltip']).
+                    '"><a href="'.self::$actions[$link]['href'].'">'.
+                    htmlspecialchars(self::$actions[$link]['text']).
+                    '</a></li>';
+        return true;
+    }
+
     //// non-hooks ////
 
     // fills self::$actions for current title
@@ -120,7 +140,7 @@ class DocExport
             return true;
         self::$actions = array();
 
-        global $wgTitle, $wgRequest;
+        global $wgTitle, $wgRequest, $egDocexportCleanHtmlParams;
 
         $disallow_actions = array('edit', 'submit'); // disallowed actions
         $action = $wgRequest->getVal('action');
@@ -137,19 +157,24 @@ class DocExport
         wfLoadExtensionMessages('DocExport');
 
         self::$actions['export2word'] = array(
-            'class' => false,
-            'text'  => wfMsg('docexport-msword-export-link'),
-            'href'  => $wgRequest->appendQuery('action=export2word')
+            'text' => wfMsg('docexport-msword-export-link'),
+            'tooltip' => wfMsg('tooltip-ca-export2word'),
+            'href' => $wgRequest->appendQuery('action=export2word')
         );
         self::$actions['export2oo'] = array(
-            'class' => false,
-            'text'  => wfMsg('docexport-oo-export-link'),
-            'href'  => $wgTitle->getFullURL('action=export2oo')
+            'text' => wfMsg('docexport-oo-export-link'),
+            'tooltip' => wfMsg('tooltip-ca-export2oo'),
+            'href' => $wgTitle->getFullURL('action=export2oo')
         );
         self::$actions['purge'] = array(
-            'class' => false,
-            'text'  => wfMsg('docexport-purge-tab'),
-            'href'  => $wgTitle->getFullURL('action=purge')
+            'text' => wfMsg('docexport-purge-tab'),
+            'tooltip' => wfMsg('tooltip-ca-purge'),
+            'href' => $wgTitle->getFullURL('action=purge')
+        );
+        self::$actions['cleanmonobook'] = array(
+            'text' => wfMsg('link-cleanmonobook'),
+            'tooltip' => wfMsg('tooltip-link-cleanmonobook'),
+            'href' => $wgTitle->getLocalURL($egDocexportCleanHtmlParams),
         );
 
         return true;
