@@ -92,7 +92,8 @@ class DocExport
     static function onSkinTemplateContentActions(&$content_actions)
     {
         self::fillActions();
-        $content_actions['purge'] = self::$actions['purge'];
+        if (!empty(self::$actions['purge']))
+            $content_actions['purge'] = self::$actions['purge'];
         return true;
     }
 
@@ -100,7 +101,8 @@ class DocExport
     static function onSkinTemplateNavigation(&$skin, &$links)
     {
         self::fillActions();
-        $links['views'][] = self::$actions['purge'];
+        if (!empty(self::$actions['purge']))
+            $links['views'][] = self::$actions['purge'];
         return true;
     }
 
