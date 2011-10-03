@@ -185,15 +185,13 @@ class DocExport
     // Output HTML code with correct content-type for M$WORD / OO
     static function sendTo($article, $to)
     {
-        global $egDocExportStyles, $wgServer;
+        global $wgServer, $wgParser;
         $html = self::getPureHTML($article);
         $title = $article->getTitle();
 
-        $st = $egDocExportStyles[$to];
-        if (!$st)
-            $st = dirname(__FILE__) . "/styles-$to.css";
-        $st = @file_get_contents($st);
-        $st = str_replace('{{SERVER}}', $wgServer.$wgScriptPath, $st);
+        // Fetch styles from MediaWiki:docexport-$to.css, expand templates
+        $st = wfMsgNoTrans("docexport-$to.css");
+        $st = $wgParser->preprocess($st, Title::makeTitleSafe(NS_MEDIAWIKI, "docexport-$to.css"), new ParserOptions());
         if ($to == 'word')
         {
             // Add styles for HTML list numbering
