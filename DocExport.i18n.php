@@ -29,7 +29,6 @@ p, table, li, dt, dl, h1, h2, h3, h4, h5, h6 { font-family: Arial; }
 dt { font-weight: bold; }
 p, table, li { text-align: justify; }
 body { font-size: 12pt; }
-h1 { text-transform: uppercase; }
 ul li { list-style-type: square; }
 img { max-width: 17cm; height: auto !important; }
 .maximg img { width: 642px; height: auto !important; }
