@@ -84,7 +84,7 @@ class DocExport
     static function ParserGetVariableValueSwitch(&$parser, &$varCache, &$index, &$ret)
     {
         if ($index == 'docexport')
-            $ret = $parser->extIsDocExport ? '1' : '';
+            $ret = !empty($parser->extIsDocExport) ? '1' : '';
         return true;
     }
 
