@@ -24,10 +24,10 @@ These are the original styles for wiki article export to OpenOffice. -->
     'docexport-word.css'           => '{{MediaWiki:docexport-word-orig.css}}',
     'docexport-word-orig.css'      =>
 '<!-- Do not edit this page. Edit MediaWiki:docexport-word.css instead.
-These are the original styles for wiki article export to OpenOffice. -->
+These are the original styles for wiki article export to M$ Word. -->
 p, table, li, dt, dl, h1, h2, h3, h4, h5, h6 { font-family: Arial; }
 dt { font-weight: bold; }
-p, table, li { text-align: justify; }
+p, li { text-align: justify; }
 body { font-size: 12pt; }
 ul li { list-style-type: square; }
 img { max-width: 17cm; height: auto !important; }
