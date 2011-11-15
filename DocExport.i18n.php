@@ -18,7 +18,11 @@ $messages['en'] = array(
     'docexport-oo-orig.css'        =>
 '<!-- Do not edit this page. Edit MediaWiki:docexport-oo.css instead.
 These are the original styles for wiki article export to OpenOffice. -->
-.maximg img { width: 17cm; height: auto !important; }',
+td, th { vertical-align: top; }
+p, li { text-align: justify; }
+body { font-size: 12pt; }
+.maximg img { width: 17cm; height: auto !important; }
+',
 
     // CSS styles for M$Word export
     'docexport-word.css'           => '{{MediaWiki:docexport-word-orig.css}}',
@@ -26,6 +30,7 @@ These are the original styles for wiki article export to OpenOffice. -->
 '<!-- Do not edit this page. Edit MediaWiki:docexport-word.css instead.
 These are the original styles for wiki article export to M$ Word. -->
 p, table, li, dt, dl, h1, h2, h3, h4, h5, h6 { font-family: Arial; }
+td, th { vertical-align: top; }
 dt { font-weight: bold; }
 p, li { text-align: justify; }
 body { font-size: 12pt; }
