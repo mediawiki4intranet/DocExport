@@ -71,4 +71,5 @@ $magicWords = array();
 
 $magicWords['en'] = array(
     'docexport' => array('1', 'DOCEXPORT'),
+    'docexportcss' => array('1', 'docexportcss'),
 );

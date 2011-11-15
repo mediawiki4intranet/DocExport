@@ -44,6 +44,7 @@ $wgHooks['SkinTemplateNavigation'][]     = 'DocExport::onSkinTemplateNavigation'
 $wgHooks['SkinTemplateToolboxEnd'][]     = 'DocExport::SkinTemplateToolboxEnd';
 $wgHooks['MagicWordwgVariableIDs'][]     = 'DocExport::MagicWordwgVariableIDs';
 $wgHooks['ParserGetVariableValueSwitch'][] = 'DocExport::ParserGetVariableValueSwitch';
+$wgHooks['ParserFirstCallInit'][]        = 'DocExport::ParserFirstCallInit';
 
 $wgExtensionMessagesFiles['DocExport'] = dirname(__FILE__).'/DocExport.i18n.php';
 $wgExtensionFunctions[] = 'DocExport::Setup';
@@ -63,6 +64,7 @@ class DocExport
     static $version     = '1.4 (2011-09-29)';
     static $required_mw = '1.11';
     static $actions     = NULL;
+    static $css         = '';
 
     static function Setup()
     {
@@ -85,6 +87,20 @@ class DocExport
     {
         if ($index == 'docexport')
             $ret = !empty($parser->extIsDocExport) ? '1' : '';
+        return true;
+    }
+
+    // Parser function used to add custom css for export
+    static function docexportcss($parser, $args)
+    {
+        self::$css .= trim($args)."\n";
+        return '';
+    }
+
+    // Sets function hook to parser
+    static function ParserFirstCallInit($parser)
+    {
+        $parser->setFunctionHook('docexportcss', 'DocExport::docexportcss');
         return true;
     }
 
@@ -198,6 +214,15 @@ class DocExport
             $html = self::multinumLists($html, $st);
             // Enable page numbering
             $html = "<div class=\"SectionNumbered\">$html</div>";
+        }
+        if (!empty(self::$css))
+        {
+            if (preg_match('/mso-(even|first|)-?(header|footer)/is', self::$css))
+            {
+                // Remove headers/footers when page is using custom ones
+                $st = preg_replace('/mso-(even|first|)-?(header|footer)\s*:[^;]*;\s*/is', '', $st);
+            }
+            $st = trim($st)."\n".self::$css;
         }
 
         $html =
@@ -317,7 +342,7 @@ class DocExport
         $parserOptions->setTidy(true);
         $wgParser->mShowToc = false;
         $wgParser->extIsDocExport = true;
-        $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent()) ."\n\n", $title, $parserOptions);
+        $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent())."\n", $title, $parserOptions);
         $wgParser->extIsDocExport = false;
 
         $html = self::html2print($parserOutput->getText(), $title);
