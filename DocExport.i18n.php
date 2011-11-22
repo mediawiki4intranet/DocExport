@@ -38,6 +38,7 @@ ul li { list-style-type: square; }
 img { max-width: 17cm; height: auto !important; }
 .maximg img { width: 642px; height: auto !important; }
 @page SectionNumbered {
+	mso-title-page:yes;
 	mso-even-header:url("{{SERVER}}{{SCRIPTPATH}}/extensions/DocExport/header.htm") eh1;
 	mso-header:url("{{SERVER}}{{SCRIPTPATH}}/extensions/DocExport/header.htm") h1;
 	mso-even-footer:url("{{SERVER}}{{SCRIPTPATH}}/extensions/DocExport/header.htm") ef1;
