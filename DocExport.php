@@ -360,7 +360,7 @@ class DocExport
         // Remove enclosing <object type="image/svg+xml"> for SVG+PNG images
         $html = preg_replace('#<object[^<>]*type=[\"\']?image/svg\+xml[^<>]*>(.*?)</object\s*>#is', '\1', $html);
         // Make image urls absolute
-        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer, $html);
+        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer.$wgScriptPath, $html);
         // Replace links to anchors within self to just anchors
         if ($title)
             $html = str_replace('href="'.$title->getLocalUrl().'#', 'href="#', $html);
