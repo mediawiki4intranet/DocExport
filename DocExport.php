@@ -118,7 +118,7 @@ class DocExport
     {
         self::fillActions();
         if (!empty(self::$actions['purge']))
-            $links['views'][] = self::$actions['purge'];
+            $links['views']['purge'] = self::$actions['purge'];
         return true;
     }
 
@@ -177,22 +177,26 @@ class DocExport
         self::$actions['export2word'] = array(
             'text' => wfMsg('docexport-msword-export-link'),
             'tooltip' => wfMsg('tooltip-ca-export2word'),
-            'href' => $wgRequest->appendQuery('action=export2word')
+            'href' => $wgRequest->appendQuery('action=export2word'),
+            'class' => '',
         );
         self::$actions['export2oo'] = array(
             'text' => wfMsg('docexport-oo-export-link'),
             'tooltip' => wfMsg('tooltip-ca-export2oo'),
-            'href' => $wgTitle->getFullURL('action=export2oo')
+            'href' => $wgTitle->getFullURL('action=export2oo'),
+            'class' => '',
         );
         self::$actions['purge'] = array(
             'text' => wfMsg('docexport-purge-tab'),
             'tooltip' => wfMsg('tooltip-ca-purge'),
-            'href' => $wgTitle->getFullURL('action=purge')
+            'href' => $wgTitle->getFullURL('action=purge'),
+            'class' => '',
         );
         self::$actions['cleanmonobook'] = array(
             'text' => wfMsg('link-cleanmonobook'),
             'tooltip' => wfMsg('tooltip-link-cleanmonobook'),
             'href' => $wgTitle->getLocalURL($egDocexportCleanHtmlParams),
+            'class' => '',
         );
 
         return true;
