@@ -114,11 +114,12 @@ class DocExport
     }
 
     // Hook used to display a tab in Vector (MediaWiki 1.16+) skin
+    // Also standard skins in MediaWiki 1.18
     static function onSkinTemplateNavigation(&$skin, &$links)
     {
         self::fillActions();
         if (!empty(self::$actions['purge']))
-            $links['views']['purge'] = self::$actions['purge'];
+            $links[get_class($skin) == 'SkinVector' ? 'views' : 'actions']['purge'] = self::$actions['purge'];
         return true;
     }
 
