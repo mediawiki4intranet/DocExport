@@ -136,7 +136,7 @@ class DocExport
     }
 
     // Output our TOOLBOX links
-    function SkinTemplateToolboxEnd($tpl)
+    static function SkinTemplateToolboxEnd($tpl)
     {
         self::fillActions();
         foreach (array('cleanmonobook', 'export2word', 'export2oo') as $link)
