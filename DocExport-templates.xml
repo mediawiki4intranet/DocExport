@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.6/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.6/ http://www.mediawiki.org/xml/export-0.6.xsd" version="0.6" xml:lang="ru">
+  <siteinfo>
+    <sitename>CustisWiki</sitename>
+    <base>http://wiki.office.custis.ru/wiki/index.php/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0</base>
+    <generator>MediaWiki 1.18.5</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Медиа</namespace>
+      <namespace key="-1" case="first-letter">Служебная</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Обсуждение</namespace>
+      <namespace key="2" case="first-letter">Участник</namespace>
+      <namespace key="3" case="first-letter">Обсуждение участника</namespace>
+      <namespace key="4" case="first-letter">CustisWiki</namespace>
+      <namespace key="5" case="first-letter">Обсуждение CustisWiki</namespace>
+      <namespace key="6" case="first-letter">Файл</namespace>
+      <namespace key="7" case="first-letter">Обсуждение файла</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">Обсуждение MediaWiki</namespace>
+      <namespace key="10" case="first-letter">Шаблон</namespace>
+      <namespace key="11" case="first-letter">Обсуждение шаблона</namespace>
+      <namespace key="12" case="first-letter">Справка</namespace>
+      <namespace key="13" case="first-letter">Обсуждение справки</namespace>
+      <namespace key="14" case="first-letter">Категория</namespace>
+      <namespace key="15" case="first-letter">Обсуждение категории</namespace>
+      <namespace key="95" case="first-letter">Архив</namespace>
+      <namespace key="96" case="first-letter">Обсуждение архива</namespace>
+      <namespace key="100" case="first-letter">Блог</namespace>
+      <namespace key="101" case="first-letter">Обсуждение блога</namespace>
+      <namespace key="102" case="first-letter">ACL</namespace>
+      <namespace key="103" case="first-letter">ACL talk</namespace>
+      <namespace key="104" case="first-letter">Quiz</namespace>
+      <namespace key="105" case="first-letter">Quiz talk</namespace>
+      <namespace key="122" case="first-letter">Свойство</namespace>
+      <namespace key="123" case="first-letter">Обсуждение свойства</namespace>
+      <namespace key="128" case="first-letter">Концепция</namespace>
+      <namespace key="129" case="first-letter">Обсуждение концепции</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Template:Word/ImgNum</title>
+    <id>19660</id>
+    <revision>
+      <id>131616</id>
+      <timestamp>2011-10-17T16:54:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>Новая страница: «&lt;html&gt;&lt;p class=MsoCaption align=center style='text-align:center'&gt;&lt;/html&gt;{{{2|Рис.}}}&lt;html&gt; &lt;!--[if supportFields]&gt;&lt;span style='mso-element:field-begin'&gt;&lt;/span&gt;&lt;sp...»</comment>
+      <text xml:space="preserve" bytes="479">&lt;html&gt;&lt;p class=MsoCaption align=center style='text-align:center'&gt;&lt;/html&gt;{{{2|Рис.}}}&lt;html&gt; &lt;!--[if supportFields]&gt;&lt;span
+style='mso-element:field-begin'&gt;&lt;/span&gt;&lt;span style='mso-spacerun:yes'&gt; &lt;/span&gt;SEQ
+&lt;/html&gt;{{{2|Рис.}}}&lt;html&gt; \* ARABIC &lt;span style='mso-element:field-separator'&gt;&lt;/span&gt;&lt;![endif]--&gt;&lt;span
+style='mso-no-proof:yes'&gt;@@&lt;/span&gt;&lt;!--[if supportFields]&gt;&lt;span style='mso-element:
+field-end'&gt;&lt;/span&gt;&lt;![endif]--&gt;&lt;/html&gt;{{#ifeq:{{{1|}}}|||. {{{1|}}}}}&lt;html&gt;&lt;/p&gt;&lt;/html&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/Landscape/Start</title>
+    <id>6764</id>
+    <redirect />
+    <revision>
+      <id>65071</id>
+      <timestamp>2010-02-18T12:43:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>переименовал «[[Шаблон:Word/Landscape/Start]]» в «[[Шаблон:Word/SectionBreak]]»</comment>
+      <text xml:space="preserve" bytes="66">#перенаправление [[Шаблон:Word/SectionBreak]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/LandscapePageBegin</title>
+    <id>16538</id>
+    <revision>
+      <id>136416</id>
+      <timestamp>2011-12-05T15:00:09Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="111">&lt;br clear='all' style='page-break-before:always;mso-break-type:section-break' /&gt; &lt;div class=&quot;SectionLandscape&quot;&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/LandscapePageEnd</title>
+    <id>16539</id>
+    <revision>
+      <id>136417</id>
+      <timestamp>2011-12-05T15:00:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="88">
+&lt;/div&gt; &lt;br clear='all' style='page-break-before:always;mso-break-type:section-break' /&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/MaxImg</title>
+    <id>17318</id>
+    <revision>
+      <id>125377</id>
+      <timestamp>2011-08-18T14:28:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <text xml:space="preserve" bytes="411">{{#if:{{DOCEXPORT}}|&lt;html&gt;&lt;img src=&quot;&lt;/html&gt;{{localimage:{{{1|}}}}} {{#ifexpr:{{#mediawidth:Файл:{{{1|}}}}} &gt; {{{w|16.5}}} / 2.54 * 96|&lt;html&gt;&quot; width=&quot;&lt;/html&gt;{{#expr: ceil( {{{w|16.5}}} / 2.54 * 96 )}}&lt;html&gt;&quot; height=&quot;&lt;/html&gt;{{#expr: ceil( {{{w|16.5}}} / 2.54 * 96 / {{#mediawidth:Файл:{{{1|}}}}} * {{#mediaheight:Файл:{{{1|}}}}} )}} }}&lt;html&gt;&quot;&gt;&lt;/html&gt;|[[Файл:{{{1|}}}|{{{2|}}}|{{{3|}}}|{{{4|}}}]]}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/PageBreak</title>
+    <id>17327</id>
+    <revision>
+      <id>122767</id>
+      <timestamp>2011-07-19T11:48:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <text xml:space="preserve" bytes="97">&lt;html&gt;&lt;br clear='all' style='page-break-before:always;mso-break-type:page-break' /&gt;&lt;/html&gt;
+&amp;nbsp;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/SectionBreak</title>
+    <id>6763</id>
+    <revision>
+      <id>65070</id>
+      <timestamp>2010-02-18T12:43:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>переименовал «[[Шаблон:Word/Landscape/Start]]» в «[[Шаблон:Word/SectionBreak]]»</comment>
+      <text xml:space="preserve" bytes="93">&lt;html&gt;&lt;br clear='all' style='page-break-before:always;mso-break-type:section-break' /&gt;&lt;/html&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Word/Toc</title>
+    <id>18189</id>
+    <revision>
+      <id>126321</id>
+      <timestamp>2011-08-30T09:11:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>Новая страница: «&lt;html&gt; &lt;w:Sdt SdtDocPart=&quot;t&quot; DocPartType=&quot;Table of Contents&quot;  DocPartUnique=&quot;t&quot; ID=&quot;1&quot;&gt;  &lt;p class=MsoTocHeading&gt;&lt;b&gt;&lt;big&gt;Оглавление&lt;/big&gt;&lt;/b&gt;&lt;w:sdtPr&gt;&lt;/w:sd...»</comment>
+      <text xml:space="preserve" bytes="523">&lt;html&gt;
+&lt;w:Sdt SdtDocPart=&quot;t&quot; DocPartType=&quot;Table of Contents&quot;
+ DocPartUnique=&quot;t&quot; ID=&quot;1&quot;&gt;
+ &lt;p class=MsoTocHeading&gt;&lt;b&gt;&lt;big&gt;Оглавление&lt;/big&gt;&lt;/b&gt;&lt;w:sdtPr&gt;&lt;/w:sdtPr&gt;&lt;/p&gt;
+ &lt;p class=MsoNormal&gt;&lt;!--[if supportFields]&gt;&lt;span style='mso-element:field-begin'&gt;&lt;/span&gt;&lt;span
+ style='mso-spacerun:yes'&gt; &lt;/span&gt;TOC \o &amp;quot;1-3&amp;quot; \h \z \u &lt;span
+ style='mso-element:field-separator'&gt;&lt;/span&gt;&lt;![endif]--&gt;&lt;/html&gt;__TOC__&lt;html&gt;&lt;!--[if supportFields]&gt;&lt;b&gt;&lt;span
+ style='mso-element:field-end'&gt;&lt;/span&gt;&lt;/b&gt;&lt;![endif]--&gt;&lt;/p&gt;
+&lt;/w:Sdt&gt;
+&lt;/html&gt;</text>
+    </revision>
+  </page>
+</mediawiki>

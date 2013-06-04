@@ -10,7 +10,7 @@ $messages['en'] = array(
     'tooltip-ca-export2word'       => 'Export to MS Word',
     'tooltip-ca-export2oo'         => 'Export to Open Office',
     'tooltip-ca-purge'             => 'Purge/refresh article, clear cache…',
-    'link-cleanmonobook'           => 'Clean page',
+    'link-cleanmonobook'           => 'Clean HTML',
     'tooltip-link-cleanmonobook'   => 'Show clean page version, without any toolboxes/navigation, but with screen styles - useful for saving in HTM/MHT formats.',
 
     // CSS styles for OpenOffice export

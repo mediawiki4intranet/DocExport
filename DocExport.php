@@ -7,11 +7,6 @@
  * Copyright © 2008-2011 Stas Fomin, Vitaliy Filippov
  * http://wiki.4intra.net/DocExport
  *
- * 1) Adds a content-action tab "purge"
- * 2) Adds "clean HTML", "->m$word", "->openoffice" links to toolbox (in the left left)
- *    "clean HTML" leads to &useskin=cleanmonobook by default,
- *    you can change it with $egDocexportCleanHtmlParams
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,6 +21,24 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/**
+ * INSTALLATION:
+ * 1) Put require_once("$IP/extensions/DocExport/DocExport.php"); into your LocalSettings.php
+ * 2) DocExport-templates.xml file contains some useful M$Word voodoo magic templates.
+ *    Import it into your Wiki via Special:Import to use them.
+ * 3) Install cleanmonobook skin from mediawiki4intranet if you want to use "Clean HTML"
+ *
+ * FEATURES:
+ * 1) Content-action tab "purge" is added - click it to clear article cache
+ * 2) "->m$word", "->openoffice" links are added to toolbox - click to open article in m$word/OO.o
+ * 3) "Clean HTML" link is also added - the intent is to allow display of "clean" page version, without
+ *    any toolboxes and navigation, but WITH normal page styles. Link leads to &useskin=cleanmonobook
+ *    by default ("cleanmonobook" skin is required). To change it, set the following variable:
+ *    $egDocexportCleanHtmlParams = "useskin=cleanmonobook";
+ *    To disable:
+ *    $egDocexportCleanHtmlParams = false;
  */
 
 if (!defined('MEDIAWIKI'))
@@ -56,8 +69,7 @@ $wgExtensionCredits['other'][] = array(
     'url'         => 'http://wiki.4intra.net/DocExport',
 );
 
-if (!isset($egDocexportCleanHtmlParams))
-    $egDocexportCleanHtmlParams = "useskin=cleanmonobook";
+$egDocexportCleanHtmlParams = "useskin=cleanmonobook";
 
 class DocExport
 {
@@ -146,7 +158,7 @@ class DocExport
                     '"><a href="'.self::$actions[$link]['href'].'">'.
                     htmlspecialchars(self::$actions[$link]['text']).
                     '</a></li>';
-        return true;
+$        return true;
     }
 
     //// non-hooks ////
@@ -193,12 +205,15 @@ class DocExport
             'href' => $wgTitle->getFullURL('action=purge'),
             'class' => '',
         );
-        self::$actions['cleanmonobook'] = array(
-            'text' => wfMsg('link-cleanmonobook'),
-            'tooltip' => wfMsg('tooltip-link-cleanmonobook'),
-            'href' => $wgTitle->getLocalURL($egDocexportCleanHtmlParams),
-            'class' => '',
-        );
+        if ($egDocexportCleanHtmlParams)
+        {
+            self::$actions['cleanmonobook'] = array(
+                'text' => wfMsg('link-cleanmonobook'),
+                'tooltip' => wfMsg('tooltip-link-cleanmonobook'),
+                'href' => $wgTitle->getLocalURL($egDocexportCleanHtmlParams),
+                'class' => '',
+            );
+        }
 
         return true;
     }
