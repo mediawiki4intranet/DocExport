@@ -158,7 +158,7 @@ class DocExport
                     '"><a href="'.self::$actions[$link]['href'].'">'.
                     htmlspecialchars(self::$actions[$link]['text']).
                     '</a></li>';
-$        return true;
+        return true;
     }
 
     //// non-hooks ////
