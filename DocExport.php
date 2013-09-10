@@ -89,7 +89,6 @@ class DocExport
     // Hook that creates {{DOCEXPORT}} magic word
     static function MagicWordwgVariableIDs(&$mVariablesIDs)
     {
-        wfLoadExtensionMessages('DocExport');
         $mVariablesIDs[] = 'docexport';
         return true;
     }
@@ -184,8 +183,6 @@ class DocExport
         // Disable for edit/preview
         if (in_array($action, $disallow_actions))
             return false;
-
-        wfLoadExtensionMessages('DocExport');
 
         self::$actions['export2word'] = array(
             'text' => wfMsg('docexport-msword-export-link'),
@@ -348,9 +345,9 @@ class DocExport
         global $wgOut, $wgUser, $wgParser;
 
         $title = $article->getTitle();
-        if (method_exists($title, 'userCanReadEx') && !$title->userCanReadEx())
+        // Check read permission
+        if (!$title->userCanRead())
         {
-            // Support HaloACL rights
             print '<html><body>DocExport: Permission Denied</body></html>';
             exit;
         }
