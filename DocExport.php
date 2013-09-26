@@ -345,6 +345,15 @@ class DocExport
         global $wgOut, $wgUser, $wgParser;
 
         $title = $article->getTitle();
+        while($title->isRedirect())
+        {
+            if (!$title->userCanRead())
+            {
+                break;
+            }
+            $title = $article->getRedirectTarget();
+            $article = new Article($title);
+        }
         // Check read permission
         if (!$title->userCanRead())
         {
