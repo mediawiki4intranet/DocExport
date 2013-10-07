@@ -252,11 +252,13 @@ class DocExport
             $html .
             '</body></html>';
 
-        header('Content-type: '.($to == 'word' ? 'application/msword' : 'vnd.oasis.opendocument.text'));
+        header('Content-Type: '.($to == 'word' ? 'application/msword' : 'vnd.oasis.opendocument.text'));
         header('Content-Length: '.strlen($html));
         $filename = $title.($to == 'word' ? '.doc' : '.odp');
         header('Content-Disposition: attachment; filename="'.$filename.'"');
+        @ob_end_flush();
         echo $html;
+        exit;
     }
 
     /* Load HTML content into a DOMDocument */
