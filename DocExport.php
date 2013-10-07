@@ -218,7 +218,7 @@ class DocExport
     // Output HTML code with correct content-type for M$WORD / OO
     static function sendTo($article, $to)
     {
-        global $wgServer, $wgParser;
+        global $wgServer, $wgParser, $wgOut;
         $html = self::getPureHTML($article);
         $title = $article->getTitle();
 
@@ -252,13 +252,14 @@ class DocExport
             $html .
             '</body></html>';
 
+        $wgOut->setPrintable();
+        $wgOut->disable();
+        wfResetOutputBuffers();
         header('Content-Type: '.($to == 'word' ? 'application/msword' : 'vnd.oasis.opendocument.text'));
         header('Content-Length: '.strlen($html));
         $filename = $title.($to == 'word' ? '.doc' : '.odp');
         header('Content-Disposition: attachment; filename="'.$filename.'"');
-        @ob_end_flush();
         echo $html;
-        exit;
     }
 
     /* Load HTML content into a DOMDocument */
@@ -344,7 +345,7 @@ class DocExport
 
     static function getPureHTML($article)
     {
-        global $wgOut, $wgUser, $wgParser;
+        global $wgUser, $wgParser;
 
         $title = $article->getTitle();
         while($title->isRedirect())
@@ -363,8 +364,6 @@ class DocExport
             exit;
         }
 
-        $wgOut->setPrintable();
-        $wgOut->disable();
         $parserOptions = ParserOptions::newFromUser($wgUser);
         $parserOptions->setEditSection(false);
         $parserOptions->setTidy(true);
