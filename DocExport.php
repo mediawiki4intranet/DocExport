@@ -171,6 +171,8 @@ class DocExport
         self::$actions = array();
 
         global $wgTitle, $wgRequest, $egDocexportCleanHtmlParams;
+        if (!$wgTitle)
+            return false;
 
         $disallow_actions = array('edit', 'submit'); // disallowed actions
         $action = $wgRequest->getVal('action');
