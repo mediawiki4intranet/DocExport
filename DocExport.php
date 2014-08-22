@@ -360,7 +360,7 @@ class DocExport
             $article = new Article($title);
         }
         // Check read permission
-        if (!$title->userCanRead())
+        if (!$title->userCan( 'read' ))
         {
             print '<html><body>DocExport: Permission Denied</body></html>';
             exit;
