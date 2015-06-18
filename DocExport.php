@@ -77,6 +77,7 @@ class DocExport
     static $required_mw = '1.11';
     static $actions     = NULL;
     static $css         = '';
+    static $expandingUrls = false;
 
     static function Setup()
     {
@@ -350,22 +351,21 @@ class DocExport
         global $wgUser, $wgParser;
 
         $title = $article->getTitle();
-        while($title->isRedirect())
+        while ($title->isRedirect())
         {
-            if (!$title->userCanRead())
-            {
+            if (!$title->userCan('read'))
                 break;
-            }
             $title = $article->getRedirectTarget();
             $article = new Article($title);
         }
         // Check read permission
-        if (!$title->userCan( 'read' ))
+        if (!$title->userCan('read'))
         {
             print '<html><body>DocExport: Permission Denied</body></html>';
             exit;
         }
 
+        self::expandLocalUrls(true);
         $parserOptions = ParserOptions::newFromUser($wgUser);
         $parserOptions->setEditSection(false);
         $parserOptions->setTidy(true);
@@ -373,14 +373,14 @@ class DocExport
         $wgParser->extIsDocExport = true;
         $parserOutput = $wgParser->parse($article->preSaveTransform($article->getContent())."\n", $title, $parserOptions);
         $wgParser->extIsDocExport = false;
-
         $html = self::html2print($parserOutput->getText(), $title);
+        self::expandLocalUrls(false);
+
         return $html;
     }
 
     static function html2print($html, $title = NULL)
     {
-        global $wgScriptPath, $wgServer;
         $html = self::clearScreenOnly($html);
         // Remove [svg] graphviz links
         $html = str_replace('[svg]</a>', '</a>', $html);
@@ -388,12 +388,56 @@ class DocExport
         $html = self::clearHrefs($html);
         // Remove enclosing <object type="image/svg+xml"> for SVG+PNG images
         $html = preg_replace('#<object[^<>]*type=[\"\']?image/svg\+xml[^<>]*>(.*?)</object\s*>#is', '\1', $html);
-        // Make image urls absolute
-        $html = str_replace('src="'.$wgScriptPath, 'src="'.$wgServer.$wgScriptPath, $html);
         // Replace links to anchors within self to just anchors
         if ($title)
             $html = str_replace('href="'.$title->getLocalUrl().'#', 'href="#', $html);
         return $html;
+    }
+
+    static function expandLocalUrls($enable = true)
+    {
+        global $wgArticlePath, $wgScriptPath, $wgUploadPath, $wgStylePath, $wgMathPath, $wgLocalFileRepo;
+        static $originalPaths = null;
+
+        $prev = self::$expandingUrls;
+        if ($enable)
+        {
+            if (!self::$expandingUrls)
+            {
+                self::$expandingUrls = true;
+
+                // Save original values.
+                $originalPaths = array(
+                    $wgArticlePath, $wgScriptPath, $wgUploadPath, $wgStylePath, $wgMathPath, $wgLocalFileRepo['url']
+                );
+
+                // Expand paths.
+                $wgArticlePath = wfExpandUrl($wgArticlePath);
+                $wgScriptPath = wfExpandUrl($wgScriptPath);
+                $wgUploadPath = wfExpandUrl($wgUploadPath);
+                $wgStylePath = wfExpandUrl($wgStylePath);
+                $wgMathPath = wfExpandUrl($wgMathPath);
+                $wgLocalFileRepo['url'] = wfExpandUrl($wgLocalFileRepo['url']);
+
+                // Destroy existing RepoGroup, if any.
+                RepoGroup::destroySingleton();
+            }
+        }
+        else
+        {
+            if (self::$expandingUrls)
+            {
+                self::$expandingUrls = false;
+
+                // Restore original values.
+                list($wgArticlePath, $wgScriptPath, $wgUploadPath, $wgStylePath, $wgMathPath, $wgLocalFileRepo['url']) = $originalPaths;
+
+                // Destroy existing RepoGroup, if any.
+                RepoGroup::destroySingleton();
+            }
+        }
+
+        return $prev;
     }
 
     static function clearScreenOnly($text)
