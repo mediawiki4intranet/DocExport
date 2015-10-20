@@ -2,9 +2,9 @@
 
 /**
  * MediaWiki DocExport extension
- * Version 1.4 compatible with MediaWiki 1.16 and Vector skin
+ * Version 1.5 compatible with MediaWiki 1.19-1.26
  *
- * Copyright © 2008-2011 Stas Fomin, Vitaliy Filippov
+ * Copyright © 2008-2015 Stas Fomin, Vitaliy Filippov
  * http://wiki.4intra.net/DocExport
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,8 +73,8 @@ $egDocexportCleanHtmlParams = "useskin=cleanmonobook";
 
 class DocExport
 {
-    static $version     = '1.4 (2011-09-29)';
-    static $required_mw = '1.11';
+    static $version     = '1.5 (2015-10-20)';
+    static $required_mw = '1.19';
     static $actions     = NULL;
     static $css         = '';
     static $expandingUrls = false;
@@ -190,7 +190,7 @@ class DocExport
         self::$actions['export2word'] = array(
             'text' => wfMsg('docexport-msword-export-link'),
             'tooltip' => wfMsg('tooltip-ca-export2word'),
-            'href' => $wgRequest->appendQuery('action=export2word'),
+            'href' => $wgTitle->getFullURL('action=export2word'),
             'class' => '',
         );
         self::$actions['export2oo'] = array(
