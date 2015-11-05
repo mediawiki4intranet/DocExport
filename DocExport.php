@@ -221,7 +221,7 @@ class DocExport
     // Output HTML code with correct content-type for M$WORD / OO
     static function sendTo($article, $to)
     {
-        global $wgServer, $wgParser, $wgOut;
+        global $wgParser, $wgOut;
         $html = self::getPureHTML($article);
         $title = $article->getTitle();
 
