@@ -95,7 +95,7 @@ class DocExport
     }
 
     // Hook that evaluates {{DOCEXPORT}} magic word
-    static function ParserGetVariableValueSwitch(&$parser, &$varCache, &$index, &$ret)
+    static function ParserGetVariableValueSwitch($parser, &$varCache, &$index, &$ret)
     {
         if ($index == 'docexport')
             $ret = !empty($parser->extIsDocExport) ? '1' : '';
@@ -127,7 +127,7 @@ class DocExport
 
     // Hook used to display a tab in Vector (MediaWiki 1.16+) skin
     // Also standard skins in MediaWiki 1.18
-    static function onSkinTemplateNavigation(&$skin, &$links)
+    static function onSkinTemplateNavigation($skin, &$links)
     {
         self::fillActions();
         if (!empty(self::$actions['purge']))
