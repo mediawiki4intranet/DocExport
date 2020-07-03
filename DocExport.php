@@ -188,28 +188,28 @@ class DocExport
             return false;
 
         self::$actions['export2word'] = array(
-            'text' => wfMsg('docexport-msword-export-link'),
-            'tooltip' => wfMsg('tooltip-ca-export2word'),
+            'text' => wfMessage('docexport-msword-export-link')->text(),
+            'tooltip' => wfMessage('tooltip-ca-export2word')->text(),
             'href' => $wgTitle->getFullURL('action=export2word'),
             'class' => '',
         );
         self::$actions['export2oo'] = array(
-            'text' => wfMsg('docexport-oo-export-link'),
-            'tooltip' => wfMsg('tooltip-ca-export2oo'),
+            'text' => wfMessage('docexport-oo-export-link')->text(),
+            'tooltip' => wfMessage('tooltip-ca-export2oo')->text(),
             'href' => $wgTitle->getFullURL('action=export2oo'),
             'class' => '',
         );
         self::$actions['purge'] = array(
-            'text' => wfMsg('docexport-purge-tab'),
-            'tooltip' => wfMsg('tooltip-ca-purge'),
+            'text' => wfMessage('docexport-purge-tab')->text(),
+            'tooltip' => wfMessage('tooltip-ca-purge')->text(),
             'href' => $wgTitle->getFullURL('action=purge'),
             'class' => '',
         );
         if ($egDocexportCleanHtmlParams)
         {
             self::$actions['cleanmonobook'] = array(
-                'text' => wfMsg('link-cleanmonobook'),
-                'tooltip' => wfMsg('tooltip-link-cleanmonobook'),
+                'text' => wfMessage('link-cleanmonobook')->text(),
+                'tooltip' => wfMessage('tooltip-link-cleanmonobook')->text(),
                 'href' => $wgTitle->getLocalURL($egDocexportCleanHtmlParams),
                 'class' => '',
             );
@@ -226,7 +226,7 @@ class DocExport
         $title = $article->getTitle();
 
         // Fetch styles from MediaWiki:docexport-$to.css, expand templates
-        $st = wfMsgNoTrans("docexport-$to.css");
+        $st = wfMessageNoTrans("docexport-$to.css")->text();
         $st = $wgParser->preprocess($st, Title::makeTitleSafe(NS_MEDIAWIKI, "docexport-$to.css"), new ParserOptions());
         if ($to == 'word')
         {
